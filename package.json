@@ -1,6 +1,6 @@
 {
   "name": "@joyfour/tailwind-plugin-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "commonjs",
   "scripts": {
     "build": "tsup",
