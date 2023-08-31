@@ -5,8 +5,7 @@ import { program } from "commander";
 import path from "node:path";
 import chokidar from 'chokidar'
 import chalk from 'chalk';
-import { resolve } from 'import-meta-resolve'
-import { readFile, writeFile } from "node:fs/promises";
+import { readFileSync, writeFileSync } from "node:fs";
 
 program
     .option("-t, --template [path]", "tailwindcss plugin path", "@joyfour/tailwind-plugin-generator/template")
@@ -42,23 +41,23 @@ const cssToJs = (css: string) => {
 }
 
 
-const generatePlugin = async () => {
+const generatePlugin = () => {
     const filePaths = files.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
     const ignorePaths = ignore.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
     const entries = fg.globSync(filePaths, { dot: true, ignore: ignorePaths });
 
-    const cssObjects = await Promise.all(entries.map(async entry => {
-        const css = await readFile(entry, { encoding: 'utf-8' })
+    const cssObjects = entries.map(entry => {
+        const css = readFileSync(entry, { encoding: 'utf-8' })
         return `addComponents(${cssToJs(css)})`
-    }))
+    })
 
-    const templateUrl = new URL(resolve(template, import.meta.url))
+    const templateUrl = require.resolve(template)
 
-    const code = await readFile(templateUrl, { encoding: 'utf-8' });
+    const code = readFileSync(templateUrl, { encoding: 'utf-8' });
 
     const pluginCode = code.replace('"--Placeholder--"', cssObjects.join(";"));
 
-    writeFile(output, [banner, pluginCode].join('\n'));
+    writeFileSync(output, [banner, pluginCode].join('\n'));
 }
 
 console.log(
