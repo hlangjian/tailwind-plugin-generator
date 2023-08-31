@@ -1,5 +1,5 @@
 {
-  "name": "@hlangjian/tailwind-plugin-generator",
+  "name": "@joyfour/tailwind-plugin-generator",
   "version": "0.0.1",
   "type": "module",
   "scripts": {

@@ -9,7 +9,7 @@ import { resolve } from 'import-meta-resolve'
 import { readFile, writeFile } from "node:fs/promises";
 
 program
-    .option("-t, --template [path]", "tailwindcss plugin path", "@hlangjian/tailwind-plugin-generator/template")
+    .option("-t, --template [path]", "tailwindcss plugin path", "@joyfour/tailwind-plugin-generator/template")
     .option("-f, --files [path]", "watch files", "**/*.css")
     .option("-i, --ignore [path]", "ignore files", "node_modules/**/tailwindcss/**/*.css")
     .option("-o, --output [path]", "path of generated plugin")
