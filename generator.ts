@@ -26,10 +26,6 @@ const options = program.opts<{
 
 const { template, output = template.endsWith('ts') ? 'plugin.ts' : 'plugin.js', files, watch, ignore } = options;
 
-const banner = `
-// This file is auto-generated at ${new Date().toLocaleString()}
-`;
-
 const cssToJs = (css: string) => {
     const root = postcss.parse(css)
     root.walkAtRules(rule => {
@@ -42,6 +38,11 @@ const cssToJs = (css: string) => {
 }
 
 const generatePlugin = async () => {
+
+    const banner = `
+// This file is auto-generated at ${new Date().toLocaleString()}
+`;
+
     const filePaths = files.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
     const ignorePaths = ignore.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
     const entries = await fg(filePaths, { dot: true, ignore: ignorePaths });
