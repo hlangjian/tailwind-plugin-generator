@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
-    "dep:update": "npx taze -rw major"
+    "dep:update": "npx taze -rw major",
+    "prepublish": "tsup"
   },
   "bin": {
     "tw-generator": "dist/main.js"

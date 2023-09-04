@@ -6,7 +6,6 @@ import path from "node:path";
 import chokidar from 'chokidar'
 import chalk from 'chalk';
 import { resolve } from 'import-meta-resolve'
-import { pathToFileURL } from "node:url";
 import { readFile, writeFile } from "node:fs/promises";
 
 program
@@ -52,7 +51,7 @@ const generatePlugin = async () => {
         return `addComponents(${cssToJs(css)})`
     }))
 
-    const templateUrl = new URL(resolve(template, pathToFileURL(process.cwd()).href))
+    const templateUrl = new URL(resolve(template, import.meta.url))
 
     const code = await readFile(templateUrl, { encoding: 'utf-8' });
 
