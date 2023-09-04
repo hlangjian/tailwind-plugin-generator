@@ -1,7 +1,7 @@
 {
   "name": "@joyfour/tailwind-plugin-generator",
   "version": "0.0.2",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "tsup",
     "dep:update": "npx taze -rw major"
@@ -28,8 +28,7 @@
   },
   "exports": {
     "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs",
+      "import": "./dist/*.js",
       "types": "./dist/*.d.ts"
     }
   }

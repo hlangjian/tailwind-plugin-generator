@@ -5,7 +5,10 @@ import { program } from "commander";
 import path from "node:path";
 import chokidar from 'chokidar'
 import chalk from 'chalk';
+import { resolve } from 'import-meta-resolve'
 import { readFileSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import { readFile } from "node:fs/promises";
 
 program
     .option("-t, --template [path]", "tailwindcss plugin path", "@joyfour/tailwind-plugin-generator/template")
@@ -40,18 +43,17 @@ const cssToJs = (css: string) => {
     return JSON.stringify(postcssJs.objectify(root));
 }
 
-
-const generatePlugin = () => {
+const generatePlugin = async () => {
     const filePaths = files.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
     const ignorePaths = ignore.split(',').map(file => path.resolve(file).replace(/\\/g, '/'))
-    const entries = fg.globSync(filePaths, { dot: true, ignore: ignorePaths });
+    const entries = await fg(filePaths, { dot: true, ignore: ignorePaths });
 
-    const cssObjects = entries.map(entry => {
-        const css = readFileSync(entry, { encoding: 'utf-8' })
+    const cssObjects = await Promise.all(entries.map(async entry => {
+        const css = await readFile(entry, { encoding: 'utf-8' })
         return `addComponents(${cssToJs(css)})`
-    })
+    }))
 
-    const templateUrl = require.resolve(template)
+    const templateUrl = new URL(resolve(template, pathToFileURL(process.cwd()).href))
 
     const code = readFileSync(templateUrl, { encoding: 'utf-8' });
 
@@ -65,7 +67,7 @@ console.log(
     `Generated plugin in ${chalk.underline(path.resolve(output))}`
 )
 
-generatePlugin()
+await generatePlugin()
 
 if (watch) {
     console.log(
@@ -80,7 +82,7 @@ if (watch) {
     })
 
     watcher
-        .on('add', () => generatePlugin())
-        .on('change', () => generatePlugin())
-        .on('unlink', () => generatePlugin())
+        .on('add', async () => await generatePlugin())
+        .on('change', async () => await generatePlugin())
+        .on('unlink', async () => await generatePlugin())
 }
