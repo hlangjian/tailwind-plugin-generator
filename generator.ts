@@ -6,9 +6,8 @@ import path from "node:path";
 import chokidar from 'chokidar'
 import chalk from 'chalk';
 import { resolve } from 'import-meta-resolve'
-import { readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
 program
     .option("-t, --template [path]", "tailwindcss plugin path", "@joyfour/tailwind-plugin-generator/template")
@@ -55,11 +54,11 @@ const generatePlugin = async () => {
 
     const templateUrl = new URL(resolve(template, pathToFileURL(process.cwd()).href))
 
-    const code = readFileSync(templateUrl, { encoding: 'utf-8' });
+    const code = await readFile(templateUrl, { encoding: 'utf-8' });
 
     const pluginCode = code.replace('"--Placeholder--"', cssObjects.join(";"));
 
-    writeFileSync(output, [banner, pluginCode].join('\n'));
+    await writeFile(output, [banner, pluginCode].join('\n'));
 }
 
 console.log(
